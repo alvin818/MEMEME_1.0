@@ -89,11 +89,15 @@ class ViewController: UIViewController,UIImagePickerControllerDelegate ,UINaviga
         _ = Meme(topText: topTextField.text!, bottomText: bottomTextField.text!, originalImage: imagePickerView.image!, memedImage: generateMemedImage())
     }
     
+    // Helper to toggle the top and bottom bars
+    func toggleTopAndBottomBars(_ hide: Bool) {
+        navigatonBar.isHidden=hide
+        toolbar.isHidden=hide
+    }
+    
     func generateMemedImage() -> UIImage {
         
-        // Hide top and bottom bars
-        navigatonBar.isHidden=true
-        toolbar.isHidden=true
+        toggleTopAndBottomBars(true)
         
         // Render view to an image
         UIGraphicsBeginImageContext(self.view.frame.size)
@@ -102,8 +106,7 @@ class ViewController: UIViewController,UIImagePickerControllerDelegate ,UINaviga
         UIGraphicsEndImageContext()
         
         // Show top and bottom bars
-        navigatonBar.isHidden=false
-        toolbar.isHidden=false
+        toggleTopAndBottomBars(false)
         return memedImage
     }
     
@@ -167,18 +170,21 @@ class ViewController: UIViewController,UIImagePickerControllerDelegate ,UINaviga
         reset()
     }
     
+    
     @IBAction func pickAnImageFromCamera(_ sender: Any) {
-        let imagePicker = UIImagePickerController()
-        imagePicker.delegate = self as? UIImagePickerControllerDelegate & UINavigationControllerDelegate
-        imagePicker.sourceType =  .camera
-        present(imagePicker, animated: true, completion: nil)
+        presentImagePickerWith(.camera)
     }
     
     @IBAction func pickImageFromAlbum(_ sender: Any) {
+        presentImagePickerWith(.photoLibrary)
+    }
+    
+    func presentImagePickerWith(_ sourceType: UIImagePickerController.SourceType) {
         let imagePicker = UIImagePickerController()
         imagePicker.delegate = self as? UIImagePickerControllerDelegate & UINavigationControllerDelegate
-        imagePicker.sourceType =  .photoLibrary
+        imagePicker.sourceType =  sourceType
         present(imagePicker, animated: true, completion: nil)
+        
     }
     
     @objc func keyboardWillShow(_ notification:Notification) {
